@@ -1,0 +1,71 @@
+import requests
+import random
+
+# functions for grabbing a random character
+def grabMar():
+    # marvel characters
+    # total: 1562
+    # 100 character limit per page
+    # offset by 100 each time to get higher range of character
+    # ex: offset: 300, limit: 100 will get you characters 300-400
+    
+    # determining random offset
+    offset = random.randrange(0, 1500, 100)
+    if offset == 1500:
+        offset = 62
+    
+    # choose a random num character
+    char_num = random.randint(1,100)
+    
+    m_charurl = 'https://gateway.marvel.com/v1/public/characters?limit=100&offset={}&ts=1&apikey=[yourAPIKey]'.format(offset)
+    m_charcode = requests.get(m_charurl)
+    print(m_charcode.json()['data']['results'][char_num]['name'])
+
+
+def grabNic():
+    # nickelodeon characters
+    n_charurl = 'https://www.giantbomb.com/api/franchise/3025-1729/?api_key=[yourAPIKey]&format=json'
+    # user-agent is needed so site knows we're not a bot
+    n_charcode = requests.get(n_charurl, headers={'user-agent':'newcoder'})
+    # 64 characters
+    char_num = random.randint(1,64)
+    print(n_charcode.json()['results']['characters'][char_num]['name'])
+    
+
+def grabNet():
+    # only contains 100 cartoon network characters
+    # cartoon network characters
+    c_charurl = 'https://www.giantbomb.com/api/franchise/3025-1737/?api_key=[yourAPIKey]&format=json'
+    # user-agent is needed so site knows we're not a bot
+    c_charcode = requests.get(c_charurl,headers={'user-agent':'newcoder'})
+    
+    char_num = random.randint(1,99)
+    print(c_charcode.json()['results']['characters'][char_num]['name'])
+
+
+        
+def grabDis():
+    #149 pages
+    # ~40 characters per page
+    # disney characters
+    
+    # choose a random page
+    page = random.randint(1,149)
+    
+    
+    # find first id on random page
+    d_charurl = 'https://api.disneyapi.dev/characters?page={}'.format(page)
+    d_charcode = requests.get(d_charurl)
+    first_id = d_charcode.json()['data'][0]['_id']
+    
+    # choose a random char number
+    char_num = random.randint(first_id, first_id+40)
+    d_charurl = 'https://api.disneyapi.dev/characters/{}'.format(char_num)
+    d_charcode = requests.get(d_charurl)
+    #print(d_charcode.json())
+    try:
+        print(d_charcode.json()['name'])
+    except Exception as e:
+        # page might not contain up to 40 characters, try again
+        grabDis()
+        
